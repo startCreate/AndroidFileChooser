@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -309,7 +308,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         int id = view.getId();
         if (id == R.id.previous_dir_imagebutton) {
             File parent = new File(currentDirectoryPath).getParentFile();
-            if (parent != null && parent.canRead()) {
+            if (parent != null) {
                 loadItems(parent.getPath());
             }
         } else if (id == R.id.select_dir_button) {
@@ -346,12 +345,14 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         });
 
         List<Item> items = new ArrayList<>();
-        for (File f : files) {
-            int drawableId = f.isFile() ? fileIconId : directoryIconId;
-            Drawable drawable = ContextCompat.getDrawable(getActivity().getApplicationContext(), drawableId);
-            items.add(new Item(f.getPath(), drawable));
+        if (files != null) {
+            for (File f : files) {
+                int drawableId = f.isFile() ? fileIconId : directoryIconId;
+                Drawable drawable = ContextCompat.getDrawable(getActivity().getApplicationContext(), drawableId);
+                items.add(new Item(f.getPath(), drawable));
+            }
+            Collections.sort(items);
         }
-        Collections.sort(items);
 
         itemsAdapter.setItems(items);
     }
