@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override public void startLoading() {
 
                 }
-
                 @Override public void finishLoading() {
 
                 }
