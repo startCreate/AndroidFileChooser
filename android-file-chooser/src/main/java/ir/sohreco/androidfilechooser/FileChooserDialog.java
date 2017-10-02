@@ -25,9 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import io.reactivex.Completable;
-import io.reactivex.functions.Action;
-
 public class FileChooserDialog extends AppCompatDialogFragment implements ItemHolder.OnItemClickListener, View.OnClickListener {
     private final static String KEY_CHOOSER_TYPE = "chooserType";
     private final static String KEY_CHOOSER_LISTENER = "chooserListener";
@@ -301,14 +298,14 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     @Override
     public void onItemClick(Item item) {
         if (item.isDirectory()) {
-            Completable.fromAction(new Action() {
+           /* Completable.fromAction(new Action() {
                 @Override public void run() throws Exception {
                     loadItems(item.getPath());
                 }
             })
                     .doOnSubscribe(disposable -> showLoadingDialog())
             .doOnComplete(() -> hideLoadingDialog())
-            .subscribe();
+            .subscribe();*/
 
         } else {
             chooserListener.onSelect(item.getPath());
