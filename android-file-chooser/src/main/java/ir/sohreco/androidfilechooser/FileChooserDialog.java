@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import rx.Completable;
+import rx.schedulers.Schedulers;
+
 public class FileChooserDialog extends AppCompatDialogFragment implements ItemHolder.OnItemClickListener, View.OnClickListener {
     private final static String KEY_CHOOSER_TYPE = "chooserType";
     private final static String KEY_CHOOSER_LISTENER = "chooserListener";
@@ -298,14 +301,14 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     @Override
     public void onItemClick(Item item) {
         if (item.isDirectory()) {
-           /* Completable.fromAction(new Action() {
-                @Override public void run() throws Exception {
-                    loadItems(item.getPath());
-                }
-            })
-                    .doOnSubscribe(disposable -> showLoadingDialog())
-            .doOnComplete(() -> hideLoadingDialog())
-            .subscribe();*/
+            Completable.fromAction(() -> loadItems(item.getPath()))
+                    .doOnSubscribe(subscription -> showLoadingDialog())
+                    .doOnCompleted(() -> hideLoadingDialog())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe();
+
+
+
 
         } else {
             chooserListener.onSelect(item.getPath());
