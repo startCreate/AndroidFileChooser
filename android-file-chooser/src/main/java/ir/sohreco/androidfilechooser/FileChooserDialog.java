@@ -1,7 +1,6 @@
 package ir.sohreco.androidfilechooser;
 
 
-import android.app.ProgressDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
@@ -52,8 +51,6 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     @ColorRes
     private int selectDirectoryButtonTextColorId;
     private float selectDirectoryButtonTextSize;
-    private TextView wait;
-    private ProgressDialog mProgressDialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,7 +94,6 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
 
     @Override
     public void onItemClick(Item item) {
-        showLoadingDialog();
         if (item.isDirectory()) {
             /*Completable.fromAction(() -> loadItems(item.getPath()))
                     .doOnSubscribe(subscription -> showLoadingDialog())
@@ -127,14 +123,6 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
             chooserListener.onSelect(currentDirectoryPath);
             dismiss();
         }
-    }
-
-    public void showLoadingDialog() {
-        wait.setVisibility(View.VISIBLE);
-    }
-
-    public void hideLoadingDialog() {
-        wait.setVisibility(View.INVISIBLE);
     }
 
     private void loadItems(final String path) {
@@ -175,10 +163,10 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
                     }
                     Collections.sort(items);
                 }
-                chooserPathOpenListener.finishLoading();
             }
         }).start();
         itemsAdapter.setItems(items);
+                chooserPathOpenListener.finishLoading();
     }
 
     private void getGivenArguments() {
@@ -206,8 +194,6 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         btnPrevDirectory = (Button) v.findViewById(R.id.previous_dir_imagebutton);
         btnSelectDirectory = (Button) v.findViewById(R.id.select_dir_button);
         tvCurrentDirectory = (TextView) v.findViewById(R.id.current_dir_textview);
-        wait = (TextView) v.findViewById(R.id.wait);
-
     }
 
     public enum ChooserType {
