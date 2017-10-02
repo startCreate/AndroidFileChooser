@@ -298,6 +298,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
 
     @Override
     public void onItemClick(Item item) {
+        showLoadingDialog();
         if (item.isDirectory()) {
             /*Completable.fromAction(() -> loadItems(item.getPath()))
                     .doOnSubscribe(subscription -> showLoadingDialog())
@@ -334,7 +335,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     }
 
     public void hideLoadingDialog() {
-        wait.setVisibility(View.INVISIBLE);
+     //   wait.setVisibility(View.INVISIBLE);
     }
 
     private void loadItems(String path) {
