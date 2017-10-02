@@ -1,6 +1,7 @@
 package ir.sohreco.androidfilechooser;
 
 
+import android.app.ProgressDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
@@ -252,6 +253,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     @ColorRes
     private int selectDirectoryButtonTextColorId;
     private float selectDirectoryButtonTextSize;
+    private ProgressDialog mProgressDialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -317,7 +319,23 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         }
     }
 
+    public void showLoadingDialog() {
+        if (mProgressDialog != null) {
+            mProgressDialog.show();
+            return;
+        }
+
+        mProgressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.please_wait), true, false);
+    }
+
+    public void hideLoadingDialog() {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
+    }
+
     private void loadItems(String path) {
+        showLoadingDialog();
         currentDirectoryPath = path;
 
         String currentDir = path.substring(path.lastIndexOf(File.separator) + 1);
@@ -355,6 +373,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         }
 
         itemsAdapter.setItems(items);
+        hideLoadingDialog();
     }
 
     private void getGivenArguments() {

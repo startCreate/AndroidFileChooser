@@ -3,4 +3,5 @@
 
     <!-- Chooser Fragment -->
     <string name="select_dir">Select</string>
+    <string name="please_wait">Please wait…</string>
 </resources>
