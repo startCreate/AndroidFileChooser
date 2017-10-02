@@ -314,6 +314,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
             chooserListener.onSelect(item.getPath());
             dismiss();
         }
+        hideLoadingDialog();
     }
 
     @Override
@@ -335,11 +336,10 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     }
 
     public void hideLoadingDialog() {
-     //   wait.setVisibility(View.INVISIBLE);
+        wait.setVisibility(View.INVISIBLE);
     }
 
     private void loadItems(String path) {
-        showLoadingDialog();
         currentDirectoryPath = path;
 
         String currentDir = path.substring(path.lastIndexOf(File.separator) + 1);
@@ -377,7 +377,6 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         }
 
         itemsAdapter.setItems(items);
-        hideLoadingDialog();
     }
 
     private void getGivenArguments() {
