@@ -166,7 +166,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
             }
         }).start();
         itemsAdapter.setItems(items);
-                chooserPathOpenListener.finishLoading();
+        chooserPathOpenListener.finishLoading();
     }
 
     private void getGivenArguments() {
