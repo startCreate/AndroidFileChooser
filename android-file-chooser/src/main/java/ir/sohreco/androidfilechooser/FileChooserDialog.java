@@ -25,9 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import rx.Completable;
-import rx.schedulers.Schedulers;
-
 public class FileChooserDialog extends AppCompatDialogFragment implements ItemHolder.OnItemClickListener, View.OnClickListener {
     private final static String KEY_CHOOSER_TYPE = "chooserType";
     private final static String KEY_CHOOSER_LISTENER = "chooserListener";
@@ -256,6 +253,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     @ColorRes
     private int selectDirectoryButtonTextColorId;
     private float selectDirectoryButtonTextSize;
+    private TextView wait;
     private ProgressDialog mProgressDialog;
 
     @Override
@@ -301,11 +299,12 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     @Override
     public void onItemClick(Item item) {
         if (item.isDirectory()) {
-            Completable.fromAction(() -> loadItems(item.getPath()))
+            /*Completable.fromAction(() -> loadItems(item.getPath()))
                     .doOnSubscribe(subscription -> showLoadingDialog())
                     .doOnCompleted(() -> hideLoadingDialog())
                     .subscribeOn(Schedulers.io())
-                    .subscribe();
+                    .subscribe();*/
+            loadItems(item.getPath());
 
 
 
@@ -331,18 +330,11 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     }
 
     public void showLoadingDialog() {
-        if (mProgressDialog != null) {
-            mProgressDialog.show();
-            return;
-        }
-
-        mProgressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.please_wait), true, false);
+        wait.setVisibility(View.VISIBLE);
     }
 
     public void hideLoadingDialog() {
-        if (mProgressDialog != null) {
-            mProgressDialog.dismiss();
-        }
+        wait.setVisibility(View.INVISIBLE);
     }
 
     private void loadItems(String path) {
@@ -412,5 +404,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         btnPrevDirectory = (Button) v.findViewById(R.id.previous_dir_imagebutton);
         btnSelectDirectory = (Button) v.findViewById(R.id.select_dir_button);
         tvCurrentDirectory = (TextView) v.findViewById(R.id.current_dir_textview);
+        wait = (TextView) v.findViewById(R.id.wait);
+
     }
 }
