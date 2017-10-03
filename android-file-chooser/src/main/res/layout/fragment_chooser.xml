@@ -7,13 +7,7 @@
     tools:context=".FileChooserDialog"
     tools:ignore="RtlHardcoded">
 
-    <RelativeLayout
-        android:id="@+id/relative"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-
-    <Button
+        <Button
         android:id="@+id/previous_dir_imagebutton"
         android:layout_width="@dimen/prev_dir_width"
         android:layout_height="@dimen/prev_dir_width"
@@ -44,7 +38,7 @@
         android:layout_alignParentBottom="true"
         android:text="@string/select_dir"
         android:visibility="gone"/>
-    </RelativeLayout>
+
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
