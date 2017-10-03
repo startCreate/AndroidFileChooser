@@ -4,6 +4,7 @@ package ir.sohreco.androidfilechooser;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -25,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -58,6 +59,10 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     private int selectDirectoryButtonTextColorId;
     private float selectDirectoryButtonTextSize;
     private ProgressBar progressBar;
+    private static Handler h;
+    private Boolean isDownload=false;
+    private List<Item> currentItems = new ArrayList<>();
+    private RelativeLayout relativeLayout;
 
 
     @Override
@@ -125,6 +130,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     }
 
     private void loadItems(final String path) {
+        relativeLayout.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
 //        chooserPathOpenListener.startLoading();
 //        refreshLayout.setEnabled(true);
@@ -164,11 +170,14 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
                     }
                     Collections.sort(items);
                 }
+                isDownload = true;
+                currentItems = items;
+                h.handleMessage(null);
                 return items;
             }
         });
-        try {
-            itemsAdapter.setItems(submit.get());
+        /*try {
+            //itemsAdapter.setItems(submit.get());
             //    progressBar.setVisibility(View.INVISIBLE);
          //   progressBar.setVisibility(View.INVISIBLE);
 
@@ -176,7 +185,11 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
 //            refreshLayout.setEnabled(false);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-        }
+        }*/
+    }
+
+    protected void setRvItems(List<Item> items){
+        itemsAdapter.setItems(items);
     }
 
     private void getGivenArguments() {
@@ -205,6 +218,16 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         btnSelectDirectory = (Button) v.findViewById(R.id.select_dir_button);
         tvCurrentDirectory = (TextView) v.findViewById(R.id.current_dir_textview);
         progressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
+         relativeLayout = (RelativeLayout) v.findViewById(R.id.relative);
+        h = new Handler() {
+            public void handleMessage(android.os.Message msg) {
+                // обновляем TextView
+                if (isDownload)
+                progressBar.setVisibility(View.INVISIBLE);
+                relativeLayout.setVisibility(View.VISIBLE);
+                itemsAdapter.setItems(currentItems);
+            };
+        };
        // progressBar.bringToFront();
     }
 
