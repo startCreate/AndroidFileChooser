@@ -1,7 +1,6 @@
 package ir.sohreco.androidfilechooser;
 
 
-import android.app.ProgressDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
@@ -10,6 +9,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -48,7 +48,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     private TextView tvCurrentDirectory;
     private ChooserType chooserType;
     private ChooserListener chooserListener;
-    private ChooserPathOpenListener chooserPathOpenListener;
+//    private ChooserPathOpenListener chooserPathOpenListener;
     private ItemsAdapter itemsAdapter;
     private String[] fileFormats;
     private String currentDirectoryPath, title, initialDirectory, selectDirectoryButtonText;
@@ -57,22 +57,8 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     @ColorRes
     private int selectDirectoryButtonTextColorId;
     private float selectDirectoryButtonTextSize;
-    private ProgressDialog mProgressDialog;
+    private SwipeRefreshLayout refreshLayout;
 
-    public void showLoadingDialog() {
-        if (mProgressDialog != null) {
-            mProgressDialog.show();
-            return;
-        }
-
-        mProgressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.please_wait), true, false);
-    }
-
-    public void hideLoadingDialog() {
-        if (mProgressDialog != null) {
-            mProgressDialog.dismiss();
-        }
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -139,8 +125,8 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     }
 
     private void loadItems(final String path) {
-        showLoadingDialog();
-        chooserPathOpenListener.startLoading();
+//        chooserPathOpenListener.startLoading();
+        refreshLayout.setEnabled(true);
         currentDirectoryPath = path;
         String currentDir = path.substring(path.lastIndexOf(File.separator) + 1);
         tvCurrentDirectory.setText(currentDir);
@@ -182,8 +168,8 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         });
         try {
             itemsAdapter.setItems(submit.get());
-            hideLoadingDialog();
-            chooserPathOpenListener.finishLoading();
+//            chooserPathOpenListener.finishLoading();
+            refreshLayout.setEnabled(false);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -214,6 +200,8 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         btnPrevDirectory = (Button) v.findViewById(R.id.previous_dir_imagebutton);
         btnSelectDirectory = (Button) v.findViewById(R.id.select_dir_button);
         tvCurrentDirectory = (TextView) v.findViewById(R.id.current_dir_textview);
+        refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.refresh_layout);
+        refreshLayout.setRefreshing(false);
     }
 
     public enum ChooserType {
@@ -263,10 +251,10 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
          *
          * @param chooserType You can choose to create either a FileChooser or a DirectoryChooser
          */
-        public Builder(ChooserType chooserType, ChooserListener chooserListener, ChooserPathOpenListener chooserPathOpenListener) {
+        public Builder(ChooserType chooserType, ChooserListener chooserListener/*, ChooserPathOpenListener chooserPathOpenListener*/) {
             this.chooserType = chooserType;
             this.chooserListener = chooserListener;
-            this.chooserPathOpenListener = chooserPathOpenListener;
+//            this.chooserPathOpenListener = chooserPathOpenListener;
         }
 
         /**
@@ -409,7 +397,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
             Bundle args = new Bundle();
             args.putSerializable(KEY_CHOOSER_TYPE, chooserType);
             fragment.chooserListener = chooserListener;
-            fragment.chooserPathOpenListener = chooserPathOpenListener;
+//            fragment.chooserPathOpenListener = chooserPathOpenListener;
             args.putString(KEY_TITLE, title);
             args.putStringArray(KEY_FILE_FORMATS, fileFormats);
             args.putString(KEY_INITIAL_DIRECTORY, initialDirectory);
