@@ -169,7 +169,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         });
         try {
             itemsAdapter.setItems(submit.get());
-                //    progressBar.setVisibility(View.INVISIBLE);
+            //    progressBar.setVisibility(View.INVISIBLE);
          //   progressBar.setVisibility(View.INVISIBLE);
 
 //            chooserPathOpenListener.finishLoading();
