@@ -3,10 +3,14 @@ package ir.sohreco.androidfilechooser.sample;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import java.io.File;
 
 import ir.sohreco.androidfilechooser.ExternalStorageNotAvailableException;
 import ir.sohreco.androidfilechooser.FileChooserDialog;
@@ -54,6 +58,17 @@ public class MainActivity extends AppCompatActivity {
         }
         openDialog();
     }
+    @Nullable protected File[] getExternalStorageFiles() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            final File externalStorage = Environment.getExternalStorageDirectory();
+            if (externalStorage != null) {
+                return externalStorage.listFiles();
+            }
+        }
+        return null;
+    }
+
 
     private void openDialog() {
         try {

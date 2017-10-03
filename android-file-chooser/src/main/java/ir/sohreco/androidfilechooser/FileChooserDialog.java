@@ -61,7 +61,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     private ProgressBar progressBar;
     private static Handler h;
     private Boolean isDownload=false;
-    private List<Item> currentItems = new ArrayList<>();
+    private volatile List<Item> currentItems = new ArrayList<>();
     private RelativeLayout relativeLayout;
 
 
@@ -224,10 +224,10 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         h = new Handler() {
             public void handleMessage(android.os.Message msg) {
                 // обновляем TextView
-                if (isDownload)
+                if (isDownload){
                 progressBar.setVisibility(View.INVISIBLE);
 //                relativeLayout.setVisibility(View.VISIBLE);
-                itemsAdapter.setItems(currentItems);
+                itemsAdapter.setItems(currentItems);}
             };
         };
        // progressBar.bringToFront();
