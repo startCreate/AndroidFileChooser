@@ -100,7 +100,6 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     @Override
     public void onItemClick(Item item) {
         if (item.isDirectory()) {
-            chooserPathOpenListener.startLoading();
             loadItems(item.getPath());
         } else {
             chooserListener.onSelect(item.getPath());
@@ -123,6 +122,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     }
 
     private void loadItems(final String path) {
+        chooserPathOpenListener.startLoading();
         currentDirectoryPath = path;
         String currentDir = path.substring(path.lastIndexOf(File.separator) + 1);
         tvCurrentDirectory.setText(currentDir);
