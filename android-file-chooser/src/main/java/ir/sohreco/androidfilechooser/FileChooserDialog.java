@@ -222,7 +222,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         // Required parameters
         private ChooserType chooserType;
         private ChooserListener chooserListener;
-        //private ChooserPathOpenListener chooserPathOpenListener;
+        private ChooserPathOpenListener chooserPathOpenListener;
 
         // Optional parameters
         private String[] fileFormats;
@@ -244,9 +244,10 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
          *
          * @param chooserType You can choose to create either a FileChooser or a DirectoryChooser
          */
-        public Builder(ChooserType chooserType, ChooserListener chooserListener) {
+        public Builder(ChooserType chooserType, ChooserListener chooserListener, ChooserPathOpenListener chooserPathOpenListener) {
             this.chooserType = chooserType;
             this.chooserListener = chooserListener;
+            this.chooserPathOpenListener = chooserPathOpenListener;
         }
 
         /**
@@ -389,7 +390,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
             Bundle args = new Bundle();
             args.putSerializable(KEY_CHOOSER_TYPE, chooserType);
             fragment.chooserListener = chooserListener;
-            //fragment.chooserPathOpenListener = chooserPathOpenListener;
+            fragment.chooserPathOpenListener = chooserPathOpenListener;
             args.putString(KEY_TITLE, title);
             args.putStringArray(KEY_FILE_FORMATS, fileFormats);
             args.putString(KEY_INITIAL_DIRECTORY, initialDirectory);
