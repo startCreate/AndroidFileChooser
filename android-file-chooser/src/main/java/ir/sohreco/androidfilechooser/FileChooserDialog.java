@@ -169,7 +169,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         });
         try {
             itemsAdapter.setItems(submit.get());
-            progressBar.setVisibility(View.INVISIBLE);
+         //   progressBar.setVisibility(View.INVISIBLE);
 
 //            chooserPathOpenListener.finishLoading();
 //            refreshLayout.setEnabled(false);
@@ -204,6 +204,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         btnSelectDirectory = (Button) v.findViewById(R.id.select_dir_button);
         tvCurrentDirectory = (TextView) v.findViewById(R.id.current_dir_textview);
         progressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
+       // progressBar.bringToFront();
     }
 
 
