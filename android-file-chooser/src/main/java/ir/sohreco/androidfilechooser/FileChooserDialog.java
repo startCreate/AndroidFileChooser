@@ -23,6 +23,11 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class FileChooserDialog extends AppCompatDialogFragment implements ItemHolder.OnItemClickListener, View.OnClickListener {
     private final static String KEY_CHOOSER_TYPE = "chooserType";
@@ -127,13 +132,12 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
 
     private void loadItems(final String path) {
         currentDirectoryPath = path;
-
         String currentDir = path.substring(path.lastIndexOf(File.separator) + 1);
         tvCurrentDirectory.setText(currentDir);
         final List<Item> items = new ArrayList<>();
-        new Thread(new Runnable() {
-            @Override public void run() {
-
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        final Future<List<Item>> submit = executor.submit(new Callable<List<Item>>() {
+            @Override public List<Item> call() throws Exception {
                 File[] files = new File(path).listFiles(new FileFilter() {
                     @Override
                     public boolean accept(File file) {
@@ -163,10 +167,20 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
                     }
                     Collections.sort(items);
                 }
+
+                return items;
             }
-        }).start();
+        });
+        try {
+            itemsAdapter.setItems(submit.get());
+            chooserPathOpenListener.finishLoading();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setItem(List<Item> items) {
         itemsAdapter.setItems(items);
-        chooserPathOpenListener.finishLoading();
     }
 
     private void getGivenArguments() {
