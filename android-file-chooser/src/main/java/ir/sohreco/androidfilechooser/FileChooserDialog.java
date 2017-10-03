@@ -159,12 +159,12 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
                     }
                     Collections.sort(items);
                 }
-                chooserPathOpenListener.finishLoading();
                 return items;
             }
         });
         try {
             itemsAdapter.setItems(submit.get());
+            chooserPathOpenListener.finishLoading();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
