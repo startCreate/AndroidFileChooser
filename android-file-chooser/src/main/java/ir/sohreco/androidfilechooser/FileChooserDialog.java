@@ -9,7 +9,6 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.File;
@@ -57,7 +57,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     @ColorRes
     private int selectDirectoryButtonTextColorId;
     private float selectDirectoryButtonTextSize;
-    private SwipeRefreshLayout refreshLayout;
+    private ProgressBar progressBar;
 
 
     @Override
@@ -125,8 +125,9 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     }
 
     private void loadItems(final String path) {
+        progressBar.setVisibility(View.VISIBLE);
 //        chooserPathOpenListener.startLoading();
-        refreshLayout.setEnabled(true);
+//        refreshLayout.setEnabled(true);
         currentDirectoryPath = path;
         String currentDir = path.substring(path.lastIndexOf(File.separator) + 1);
         tvCurrentDirectory.setText(currentDir);
@@ -168,8 +169,10 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         });
         try {
             itemsAdapter.setItems(submit.get());
+            progressBar.setVisibility(View.INVISIBLE);
+
 //            chooserPathOpenListener.finishLoading();
-            refreshLayout.setEnabled(false);
+//            refreshLayout.setEnabled(false);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -200,9 +203,12 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         btnPrevDirectory = (Button) v.findViewById(R.id.previous_dir_imagebutton);
         btnSelectDirectory = (Button) v.findViewById(R.id.select_dir_button);
         tvCurrentDirectory = (TextView) v.findViewById(R.id.current_dir_textview);
-        refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.refresh_layout);
-        refreshLayout.setRefreshing(false);
+        progressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
     }
+
+
+
+
 
     public enum ChooserType {
         FILE_CHOOSER,
@@ -229,7 +235,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         // Required parameters
         private ChooserType chooserType;
         private ChooserListener chooserListener;
-        private ChooserPathOpenListener chooserPathOpenListener;
+//        private ChooserPathOpenListener chooserPathOpenListener;
 
         // Optional parameters
         private String[] fileFormats;
