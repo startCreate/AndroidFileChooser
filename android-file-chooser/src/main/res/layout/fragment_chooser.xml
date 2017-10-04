@@ -1,5 +1,11 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
@@ -29,14 +35,30 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/select_dir_button"
         android:layout_below="@+id/previous_dir_imagebutton"
-        android:layout_marginTop="@dimen/items_list_top_margin"/>
+        android:layout_marginTop="@dimen/items_list_top_margin"
+        />
 
+<FrameLayout
+    android:id="@+id/frame_cont"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    android:visibility="gone"
+    android:onClick="onClickRelative"
+    >
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        />
+</FrameLayout>
+</RelativeLayout>
     <Button
         android:id="@+id/select_dir_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
         android:text="@string/select_dir"
-        android:visibility="gone"/>
-
-</RelativeLayout>
+        />
+</FrameLayout>

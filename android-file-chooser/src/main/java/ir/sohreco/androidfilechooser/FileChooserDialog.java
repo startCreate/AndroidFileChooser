@@ -1,8 +1,8 @@
 package ir.sohreco.androidfilechooser;
 
 
-import android.app.ProgressDialog;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.ColorRes;
@@ -14,9 +14,12 @@ import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -52,7 +55,8 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     @ColorRes
     private int selectDirectoryButtonTextColorId;
     private float selectDirectoryButtonTextSize;
-    private ProgressDialog mProgressDialog;
+    private FrameLayout progressLayout;
+    private RelativeLayout contentLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,20 +101,12 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     @Override
     public void onItemClick(Item item) {
         if (item.isDirectory()) {
-            /*Completable.fromAction(() -> loadItems(item.getPath()))
-                    .doOnSubscribe(subscription -> showLoadingDialog())
-                    .doOnCompleted(() -> hideLoadingDialog())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe();*/
             chooserPathOpenListener.startLoading();
             loadItems(item.getPath());
-
-
         } else {
             chooserListener.onSelect(item.getPath());
             dismiss();
         }
-        //  hideLoadingDialog();
     }
 
     @Override
@@ -127,64 +123,30 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         }
     }
 
-    public void showLoadingDialog() {
-        if (mProgressDialog != null) {
-            mProgressDialog.show();
-            return;
-        }
-
-        mProgressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.please_wait), true, false);
-    }
-
-    public void hideLoadingDialog() {
-        if (mProgressDialog != null) {
-            mProgressDialog.dismiss();
-        }
-    }
-
-    private void loadItems(final String path) {
+    synchronized private void loadItems(final String path) {
         currentDirectoryPath = path;
-        showLoadingDialog();
 
         String currentDir = path.substring(path.lastIndexOf(File.separator) + 1);
         tvCurrentDirectory.setText(currentDir);
-        final List<Item> items = new ArrayList<>();
-        new Thread(new Runnable() {
-            @Override public void run() {
 
-                File[] files = new File(path).listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        if (file.canRead()) {
-                            if (chooserType == ChooserType.FILE_CHOOSER && file.isFile()) {
-                                if (fileFormats != null && fileFormats.length > 0) {
-                                    for (String fileFormat : fileFormats) {
-                                        if (file.getName().endsWith(fileFormat)) {
-                                            return true;
-                                        }
-                                    }
-                                    return false;
-                                }
-                                return true;
-                            }
-                            return file.isDirectory();
-                        }
-                        return false;
-                    }
-                });
-
-                if (files != null) {
-                    for (File f : files) {
-                        int drawableId = f.isFile() ? fileIconId : directoryIconId;
-                        Drawable drawable = ContextCompat.getDrawable(getActivity().getApplicationContext(), drawableId);
-                        items.add(new Item(f.getPath(), drawable));
-                    }
-                    Collections.sort(items);
-                }
-            }
-        }).start();
-        itemsAdapter.setItems(items);
+        new LoadPathItems().execute(path);
         chooserPathOpenListener.finishLoading();
+    }
+
+    protected void setItems(List<Item> items) {
+        itemsAdapter.setItems(items);
+    }
+
+    private void showProgress() {
+        contentLayout.setAlpha(0.6f);
+        btnSelectDirectory.setClickable(false);
+        progressLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgress() {
+        contentLayout.setAlpha(1);
+        btnSelectDirectory.setClickable(true);
+        progressLayout.setVisibility(View.GONE);
     }
 
     private void getGivenArguments() {
@@ -212,6 +174,15 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         btnPrevDirectory = (Button) v.findViewById(R.id.previous_dir_imagebutton);
         btnSelectDirectory = (Button) v.findViewById(R.id.select_dir_button);
         tvCurrentDirectory = (TextView) v.findViewById(R.id.current_dir_textview);
+        progressLayout = (FrameLayout) v.findViewById(R.id.frame_cont);
+        progressLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN)
+                    return true;
+                return true;
+            }
+        });
+        contentLayout = (RelativeLayout) v.findViewById(R.id.content);
     }
 
     public enum ChooserType {
@@ -260,10 +231,9 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
          *
          * @param chooserType You can choose to create either a FileChooser or a DirectoryChooser
          */
-        public Builder(ChooserType chooserType, ChooserListener chooserListener, ChooserPathOpenListener chooserPathOpenListener) {
+        public Builder(ChooserType chooserType, ChooserListener chooserListener) {
             this.chooserType = chooserType;
             this.chooserListener = chooserListener;
-            this.chooserPathOpenListener = chooserPathOpenListener;
         }
 
         /**
@@ -406,7 +376,6 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
             Bundle args = new Bundle();
             args.putSerializable(KEY_CHOOSER_TYPE, chooserType);
             fragment.chooserListener = chooserListener;
-            fragment.chooserPathOpenListener = chooserPathOpenListener;
             args.putString(KEY_TITLE, title);
             args.putStringArray(KEY_FILE_FORMATS, fileFormats);
             args.putString(KEY_INITIAL_DIRECTORY, initialDirectory);
@@ -421,6 +390,52 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
             fragment.setArguments(args);
 
             return fragment;
+        }
+    }
+
+    private class LoadPathItems extends AsyncTask<String, Void, List<Item>> {
+        protected List<Item> doInBackground(String... paths) {
+            String path = paths[0];
+            List<Item> items = new ArrayList<>();
+            File[] files = new File(path).listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File file) {
+                    if (file.canRead()) {
+                        if (chooserType == ChooserType.FILE_CHOOSER && file.isFile()) {
+                            if (fileFormats != null && fileFormats.length > 0) {
+                                for (String fileFormat : fileFormats) {
+                                    if (file.getName().endsWith(fileFormat)) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+                        return file.isDirectory();
+                    }
+                    return false;
+                }
+            });
+
+            if (files != null) {
+                for (File f : files) {
+                    int drawableId = f.isFile() ? fileIconId : directoryIconId;
+                    Drawable drawable = ContextCompat.getDrawable(getActivity().getApplicationContext(), drawableId);
+                    items.add(new Item(f.getPath(), drawable));
+                }
+                Collections.sort(items);
+            }
+            return items;
+        }
+
+        @Override protected void onPreExecute() {
+            showProgress();
+        }
+
+        protected void onPostExecute(List<Item> result) {
+            hideProgress();
+            setItems(result);
         }
     }
 }
