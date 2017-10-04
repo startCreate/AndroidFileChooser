@@ -46,7 +46,6 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     private TextView tvCurrentDirectory;
     private ChooserType chooserType;
     private ChooserListener chooserListener;
-    private ChooserPathOpenListener chooserPathOpenListener;
     private ItemsAdapter itemsAdapter;
     private String[] fileFormats;
     private String currentDirectoryPath, title, initialDirectory, selectDirectoryButtonText;
@@ -101,7 +100,6 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     @Override
     public void onItemClick(Item item) {
         if (item.isDirectory()) {
-            chooserPathOpenListener.startLoading();
             loadItems(item.getPath());
         } else {
             chooserListener.onSelect(item.getPath());
@@ -130,7 +128,6 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         tvCurrentDirectory.setText(currentDir);
 
         new LoadPathItems().execute(path);
-        chooserPathOpenListener.finishLoading();
     }
 
     protected void setItems(List<Item> items) {
@@ -209,7 +206,6 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         // Required parameters
         private ChooserType chooserType;
         private ChooserListener chooserListener;
-        private ChooserPathOpenListener chooserPathOpenListener;
 
         // Optional parameters
         private String[] fileFormats;
