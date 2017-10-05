@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -41,7 +42,8 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     private final static String KEY_FILE_ICON_ID = "fileIconId";
     private final static String KEY_DIRECTORY_ICON_ID = "directoryIconId";
     private final static String KEY_PREVIOUS_DIRECTORY_BUTTON_ICON_ID = "previousDirectoryButtonIconId";
-    private Button btnPrevDirectory, btnSelectDirectory;
+    private ImageButton btnPrevDirectory;
+    private Button btnSelectDirectory;
     private RecyclerView rvItems;
     private TextView tvCurrentDirectory;
     private ChooserType chooserType;
@@ -55,7 +57,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     private int selectDirectoryButtonTextColorId;
     private float selectDirectoryButtonTextSize;
     private FrameLayout progressLayout;
-    private RelativeLayout contentLayout;
+    private RelativeLayout rootLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -135,13 +137,11 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     }
 
     private void showProgress() {
-        contentLayout.setAlpha(0.6f);
         btnSelectDirectory.setClickable(false);
         progressLayout.setVisibility(View.VISIBLE);
     }
 
     private void hideProgress() {
-        contentLayout.setAlpha(1);
         btnSelectDirectory.setClickable(true);
         progressLayout.setVisibility(View.GONE);
     }
@@ -168,7 +168,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
 
     private void findViews(View v) {
         rvItems = (RecyclerView) v.findViewById(R.id.items_recyclerview);
-        btnPrevDirectory = (Button) v.findViewById(R.id.previous_dir_imagebutton);
+        btnPrevDirectory = (ImageButton) v.findViewById(R.id.previous_dir_imagebutton);
         btnSelectDirectory = (Button) v.findViewById(R.id.select_dir_button);
         tvCurrentDirectory = (TextView) v.findViewById(R.id.current_dir_textview);
         progressLayout = (FrameLayout) v.findViewById(R.id.frame_cont);
@@ -179,7 +179,6 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
                 return true;
             }
         });
-        contentLayout = (RelativeLayout) v.findViewById(R.id.content);
     }
 
     public enum ChooserType {

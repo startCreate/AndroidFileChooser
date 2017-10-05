@@ -51,14 +51,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onSelect(String path) {
                     Log.d(TAG, "onSelect: " + path);
                 }
-            }, new FileChooserDialog.ChooserPathOpenListener() {
-                @Override public void startLoading() {
-
-                }
-
-                @Override public void finishLoading() {
-
-                }
             }).build();
         } catch (ExternalStorageNotAvailableException e) {
             e.printStackTrace();

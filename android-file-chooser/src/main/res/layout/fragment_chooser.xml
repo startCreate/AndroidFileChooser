@@ -1,64 +1,59 @@
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/content"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="@dimen/activity_horizontal_margin"
-                tools:context=".FileChooserDialog"
-                tools:ignore="RtlHardcoded">
-
     <Button
+        android:id="@+id/select_dir_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorAccent"
+        android:text="@string/select_dir" />
+
+    <ImageButton
         android:id="@+id/previous_dir_imagebutton"
         android:layout_width="@dimen/prev_dir_width"
         android:layout_height="@dimen/prev_dir_width"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/dimen_16"
+        android:layout_marginTop="@dimen/dimen_16" />
 
     <TextView
         android:id="@+id/current_dir_textview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/items_recyclerview"
-        android:layout_marginLeft="@dimen/current_dir_left_margin"
-        android:layout_toRightOf="@id/previous_dir_imagebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dimen_16"
+        android:layout_marginStart="@dimen/current_dir_left_margin"
+        android:layout_marginTop="@dimen/dimen_16"
+        android:layout_toEndOf="@id/previous_dir_imagebutton"
         android:gravity="center_vertical"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/items_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/select_dir_button"
+        android:layout_above="@id/select_dir_button"
         android:layout_below="@+id/previous_dir_imagebutton"
-        android:layout_marginTop="@dimen/items_list_top_margin"
-        />
+        android:layout_marginEnd="@dimen/dimen_16"
+        android:layout_marginStart="@dimen/dimen_16"
+        android:layout_marginTop="@dimen/items_list_top_margin" />
 
-<FrameLayout
-    android:id="@+id/frame_cont"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/transparent"
-    android:visibility="gone"
-    android:onClick="onClickRelative"
-    >
-    <ProgressBar
-        android:id="@+id/progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        />
-</FrameLayout>
-</RelativeLayout>
-    <Button
-        android:id="@+id/select_dir_button"
+    <FrameLayout
+        android:id="@+id/frame_cont"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:text="@string/select_dir"
-        />
-</FrameLayout>
+        android:layout_height="match_parent"
+        android:layout_above="@id/select_dir_button"
+        android:background="@color/transparent"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </FrameLayout>
+</RelativeLayout>
+
+    <!--
+    </RelativeLayout>-->
