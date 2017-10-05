@@ -35,8 +35,6 @@
         android:layout_height="match_parent"
         android:layout_above="@id/select_dir_button"
         android:layout_below="@+id/previous_dir_imagebutton"
-        android:paddingRight="@dimen/dimen_16"
-        android:paddingLeft="@dimen/dimen_16"
         android:layout_marginTop="@dimen/items_list_top_margin" />
 
     <FrameLayout
