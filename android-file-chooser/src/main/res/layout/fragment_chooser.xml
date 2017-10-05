@@ -43,7 +43,7 @@
         android:layout_height="match_parent"
         android:layout_above="@id/select_dir_button"
         android:background="@color/transparent"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ProgressBar
             android:id="@+id/progressbar"
