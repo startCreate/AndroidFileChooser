@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:paddingLeft="@dimen/dimen_16"
+    android:paddingLeft="@dimen/dimension_24dp"
     android:paddingRight="@dimen/dimen_16"
     tools:ignore="RtlHardcoded">
 
