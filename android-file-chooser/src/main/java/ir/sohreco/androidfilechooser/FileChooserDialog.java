@@ -431,6 +431,11 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
             return items;
         }
 
+        @Override protected void onCancelled() {
+            hideProgress();
+            super.onCancelled();
+        }
+
         @Override protected void onPreExecute() {
             showProgress();
         }
