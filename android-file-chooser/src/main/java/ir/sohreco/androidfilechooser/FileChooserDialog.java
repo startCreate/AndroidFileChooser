@@ -58,6 +58,7 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
     private float selectDirectoryButtonTextSize;
     private FrameLayout progressLayout;
     private RelativeLayout rootLayout;
+    private AsyncTask<String, Void, List<Item>> loadingTask;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -123,13 +124,19 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
         }
     }
 
+    @Override public void onDestroyView() {
+        if (loadingTask != null)
+            loadingTask.cancel(true);
+        super.onDestroyView();
+    }
+
     synchronized private void loadItems(final String path) {
         currentDirectoryPath = path;
 
         String currentDir = path.substring(path.lastIndexOf(File.separator) + 1);
         tvCurrentDirectory.setText(currentDir);
 
-        new LoadPathItems().execute(path);
+        loadingTask = new LoadPathItems().execute(path);
     }
 
     protected void setItems(List<Item> items) {
