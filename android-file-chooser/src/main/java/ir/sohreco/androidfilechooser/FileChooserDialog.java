@@ -402,6 +402,8 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
             File[] files = new File(path).listFiles(new FileFilter() {
                 @Override
                 public boolean accept(File file) {
+                    if (isCancelled())
+                        return true;
                     if (file.canRead()) {
                         if (chooserType == ChooserType.FILE_CHOOSER && file.isFile()) {
                             if (fileFormats != null && fileFormats.length > 0) {
@@ -420,11 +422,16 @@ public class FileChooserDialog extends AppCompatDialogFragment implements ItemHo
                 }
             });
 
+            if (isCancelled())
+                return null;
+
             if (files != null) {
                 for (File f : files) {
                     int drawableId = f.isFile() ? fileIconId : directoryIconId;
                     Drawable drawable = ContextCompat.getDrawable(getActivity().getApplicationContext(), drawableId);
                     items.add(new Item(f.getPath(), drawable));
+                    if (isCancelled())
+                        return null;
                 }
                 Collections.sort(items);
             }

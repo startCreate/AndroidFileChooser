@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import ir.sohreco.androidfilechooser.ExternalStorageNotAvailableException;
 import ir.sohreco.androidfilechooser.FileChooserDialog;
@@ -17,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FileChooserDialog dialog;
     private static final String TAG = "MainActivity";
+    private Button btn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,12 @@ public class MainActivity extends AppCompatActivity {
         if(!hasPermissions(this, PERMISSIONS)){
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
         }
+        btn = findViewById(R.id.open);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                openDialog();
+            }
+        });
 
         openDialog();
     }
